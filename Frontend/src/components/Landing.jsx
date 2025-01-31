@@ -27,6 +27,9 @@ import {
   ChevronUp,
 } from "lucide-react"
 
+import female from "../assets/female.svg"
+import male from "../assets/male.svg"
+
 const features = [
   {
     icon: Shield,
@@ -82,22 +85,22 @@ const testimonials = [
   {
     quote: "This app has revolutionized how I manage my health. The direct line to my doctor is invaluable!",
     author: "Emily R., Patient",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: female,
   },
   {
     quote: "As a physician, this platform helps me provide more personalized and efficient care to my patients.",
     author: "Dr. James L., Cardiologist",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: male,
   },
   {
     quote: "The medication reminders have been a game-changer for my elderly parents. It gives me peace of mind.",
     author: "Sarah T., Caregiver",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: female,
   },
   {
     quote: "The symptom tracker has helped me communicate more effectively with my doctor about my chronic condition.",
     author: "Michael K., Patient",
-    avatar: "/placeholder.svg?height=80&width=80",
+    avatar: male,
   },
 ]
 
@@ -380,7 +383,7 @@ export function Landing() {
                 >
                   <div className="flex items-center mb-4">
                     <img
-                      src={testimonials[activeTestimonial].avatar || "/placeholder.svg"}
+                      src={testimonials[activeTestimonial].avatar}
                       alt={testimonials[activeTestimonial].author}
                       className="w-16 h-16 rounded-full mr-4"
                     />
