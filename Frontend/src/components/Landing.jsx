@@ -272,14 +272,14 @@ export function Landing() {
               </motion.button>
             </div>
             <div className="md:w-1/2 mt-10 md:mt-0 relative">
-              <motion.img
+              {/* <motion.img
                 src="/placeholder.svg?height=400&width=400"
                 alt="MediConnect App Interface"
                 className="rounded-lg shadow-2xl z-10 relative"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-              />
+              /> */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-300 dark:bg-blue-700 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
             </div>
             {/* Floating icons */}
