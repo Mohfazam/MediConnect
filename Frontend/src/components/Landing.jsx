@@ -428,7 +428,7 @@ export function Landing() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Get Started Now
+              <button onClick={()=>navigate("/DrugCostOptimizer")}>Join now</button>
             </motion.button>
           </div>
         </section>
