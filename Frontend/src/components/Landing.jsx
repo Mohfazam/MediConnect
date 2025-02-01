@@ -21,11 +21,13 @@ import {
   Calendar,
   ClipboardList,
   BookOpen,
-  Sun,
-  Moon,
   ChevronDown,
   ChevronUp,
 } from "lucide-react"
+
+import { Navbar } from "./Navbar"
+
+import { useNavigate } from "react-router-dom"
 
 import female from "../assets/female.svg"
 import male from "../assets/male.svg"
@@ -171,6 +173,7 @@ export function Landing() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
   const [expandedFAQ, setExpandedFAQ] = useState(null)
   const { scrollYProgress } = useScroll()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (isDarkMode) {
@@ -195,46 +198,7 @@ export function Landing() {
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-blue-500 z-50" style={{ scaleX: scrollYProgress }} />
       <div className="bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200 transition-colors duration-300">
         {/* Navigation */}
-        <nav className="bg-white dark:bg-gray-800 shadow-md p-4 sticky top-0 z-40 transition-colors duration-300">
-          <div className="container mx-auto flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">MediConnect</h1>
-            <div className="flex items-center">
-              <button
-                onClick={toggleDarkMode}
-                className="mr-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors duration-300"
-              >
-                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-              <div className="md:hidden">
-                <button onClick={toggleMenu} className="focus:outline-none text-blue-600 dark:text-blue-400">
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-                  </svg>
-                </button>
-              </div>
-              <ul
-                className={`md:flex ${isMenuOpen ? "block" : "hidden"} absolute md:relative top-16 md:top-0 left-0 right-0 bg-white dark:bg-gray-800 md:bg-transparent shadow-md md:shadow-none`}
-              >
-                {["Home", "Features", "How It Works", "Testimonials", "FAQ"].map((item) => (
-                  <li key={item} className="md:ml-6 mt-2 md:mt-0">
-                    <a
-                      href={`#${item.toLowerCase().replace(" ", "-")}`}
-                      className="block py-2 md:py-0 px-4 md:px-0 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </nav>
+        <Navbar darkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
 
         {/* Hero Section */}
         <section
@@ -268,7 +232,7 @@ export function Landing() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Get Started
+                <button onClick={() => navigate("/PrescriptionAnalyzer")}>Get Started</button>
               </motion.button>
             </div>
             <div className="md:w-1/2 mt-10 md:mt-0 relative">
@@ -383,7 +347,7 @@ export function Landing() {
                 >
                   <div className="flex items-center mb-4">
                     <img
-                      src={testimonials[activeTestimonial].avatar}
+                      src={testimonials[activeTestimonial].avatar || "/placeholder.svg"}
                       alt={testimonials[activeTestimonial].author}
                       className="w-16 h-16 rounded-full mr-4"
                     />
