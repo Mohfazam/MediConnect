@@ -14,6 +14,7 @@ import {
   Calendar,
   ExternalLink,
 } from "lucide-react"
+import { Navbar } from "./Navbar" // Import the Navbar component
 
 // Sample data structure for serious medications
 const FLAGGED_MEDICATIONS = [
@@ -118,12 +119,17 @@ const EVIDENCE_COLORS = {
   Limited: "bg-orange-500",
 }
 
-export function SeriousMedications({ darkMode = false }) {
+export function SeriousMedications() {
+  const [darkMode, setDarkMode] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedOrganization, setSelectedOrganization] = useState("all")
   const [expandedMedication, setExpandedMedication] = useState(null)
-  const [sortBy, setSortBy] = useState("badEffectScore") // or "flaggedByScore"
+  const [sortBy, setSortBy] = useState("badEffectScore")
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
 
   // Get unique categories
   const categories = Array.from(new Set(FLAGGED_MEDICATIONS.map((med) => med.category)))
@@ -142,7 +148,8 @@ export function SeriousMedications({ darkMode = false }) {
   }).sort((a, b) => b[sortBy] - a[sortBy])
 
   return (
-    <div className={`min-h-screen ${darkMode ? "dark" : ""}`}>
+    <div className={darkMode ? "dark" : ""}>
+      <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <div className="bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
