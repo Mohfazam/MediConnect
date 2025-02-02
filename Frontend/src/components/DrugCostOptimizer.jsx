@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -37,7 +35,7 @@ const mockAnalysis = {
   drugClass: "ACE Inhibitor",
   dosage: "10mg",
   frequency: "Once daily",
-  costEstimate: "$24.99",
+  costEstimate: "₹1,999",
   insuranceCoverage: "Covered under your plan",
   genericName: "Lisinopril",
   manufacturer: "Lupin",
@@ -87,8 +85,8 @@ const MEDICATIONS_DATABASE = {
       savings: 80,
       manufacturers: [mockAnalysis.manufacturer],
       averagePrices: {
-        brand: 124.99,
-        generic: Number.parseFloat(mockAnalysis.costEstimate.match(/\$(\d+)/)[1]),
+        brand: 9999,
+        generic: 1999,
       },
       qualityRatings: {
         effectiveness: mockAnalysis.qualityScore,
@@ -98,8 +96,8 @@ const MEDICATIONS_DATABASE = {
     },
     pharmacyPrices: [
       {
-        name: "CVS Pharmacy",
-        price: 25.99,
+        name: "Apollo Pharmacy",
+        price: 1999,
         distance: "0.5 miles",
         stock: true,
         discount: 12,
@@ -110,8 +108,8 @@ const MEDICATIONS_DATABASE = {
         deliveryFee: 0,
       },
       {
-        name: "Walgreens",
-        price: 22.99,
+        name: "MedPlus",
+        price: 1899,
         distance: "1.2 miles",
         stock: true,
         discount: 15,
@@ -122,8 +120,8 @@ const MEDICATIONS_DATABASE = {
         deliveryFee: 4.99,
       },
       {
-        name: "Walmart Pharmacy",
-        price: 19.99,
+        name: "Wellness Forever",
+        price: 1799,
         distance: "2.5 miles",
         stock: true,
         discount: 20,
@@ -139,7 +137,7 @@ const MEDICATIONS_DATABASE = {
         name: "GoodRx",
         discount: 80,
         enrollment: "Free",
-        price: 20.99,
+        price: 1699,
         features: ["No membership fees", "Digital card", "All pharmacies accepted"],
         expirationDate: "None",
         restrictions: "None",
@@ -149,7 +147,7 @@ const MEDICATIONS_DATABASE = {
         name: "SingleCare",
         discount: 75,
         enrollment: "Free",
-        price: 22.99,
+        price: 1799,
         features: ["Instant savings", "No registration required", "Mobile app available"],
         expirationDate: "None",
         restrictions: "None",
@@ -159,7 +157,7 @@ const MEDICATIONS_DATABASE = {
         name: "WellRx",
         discount: 70,
         enrollment: "Free",
-        price: 23.99,
+        price: 1899,
         features: ["Print or digital card", "Pet medications covered", "Mail order available"],
         expirationDate: "None",
         restrictions: "None",
@@ -169,7 +167,7 @@ const MEDICATIONS_DATABASE = {
     subscriptionOptions: [
       {
         name: "Monthly Supply",
-        price: 19.99,
+        price: 1499,
         savings: 35,
         features: ["Auto-refill", "Free delivery", "24/7 support"],
         cancellationPolicy: "Cancel anytime",
@@ -178,7 +176,7 @@ const MEDICATIONS_DATABASE = {
       },
       {
         name: "90-Day Supply",
-        price: 59.99,
+        price: 3999,
         savings: 45,
         features: ["Bulk savings", "Free delivery", "Priority support"],
         cancellationPolicy: "Cancel anytime",
@@ -187,12 +185,12 @@ const MEDICATIONS_DATABASE = {
       },
     ],
     costHistory: [
-      { month: "Jan", amount: 24.99, trend: "stable" },
-      { month: "Feb", amount: 22.99, trend: "decreasing" },
-      { month: "Mar", amount: 19.99, trend: "decreasing" },
-      { month: "Apr", amount: 18.99, trend: "decreasing" },
-      { month: "May", amount: 17.99, trend: "stable" },
-      { month: "Jun", amount: 15.99, trend: "decreasing" },
+      { month: "Jan", amount: 1999, trend: "stable" },
+      { month: "Feb", amount: 1899, trend: "decreasing" },
+      { month: "Mar", amount: 1799, trend: "decreasing" },
+      { month: "Apr", amount: 1699, trend: "decreasing" },
+      { month: "May", amount: 1599, trend: "stable" },
+      { month: "Jun", amount: 1499, trend: "decreasing" },
     ],
     patientAssistance: {
       programs: [
@@ -251,8 +249,8 @@ const MEDICATIONS_DATABASE = {
       savings: 85,
       manufacturers: ["Mylan", "Teva", "Apotex"],
       averagePrices: {
-        brand: 325.99,
-        generic: 48.99,
+        brand: 24999,
+        generic: 3999,
       },
       qualityRatings: {
         effectiveness: 95,
@@ -262,8 +260,8 @@ const MEDICATIONS_DATABASE = {
     },
     pharmacyPrices: [
       {
-        name: "CVS Pharmacy",
-        price: 45.99,
+        name: "Apollo Pharmacy",
+        price: 3599,
         distance: "0.5 miles",
         stock: true,
         discount: 12,
@@ -274,8 +272,8 @@ const MEDICATIONS_DATABASE = {
         deliveryFee: 0,
       },
       {
-        name: "Walgreens",
-        price: 42.99,
+        name: "MedPlus",
+        price: 3499,
         distance: "1.2 miles",
         stock: true,
         discount: 15,
@@ -286,8 +284,8 @@ const MEDICATIONS_DATABASE = {
         deliveryFee: 4.99,
       },
       {
-        name: "Walmart Pharmacy",
-        price: 39.99,
+        name: "Wellness Forever",
+        price: 3299,
         distance: "2.5 miles",
         stock: true,
         discount: 20,
@@ -303,7 +301,7 @@ const MEDICATIONS_DATABASE = {
         name: "GoodRx",
         discount: 80,
         enrollment: "Free",
-        price: 35.99,
+        price: 2799,
         features: ["No membership fees", "Digital card", "All pharmacies accepted"],
         expirationDate: "None",
         restrictions: "None",
@@ -313,7 +311,7 @@ const MEDICATIONS_DATABASE = {
         name: "SingleCare",
         discount: 75,
         enrollment: "Free",
-        price: 37.99,
+        price: 2999,
         features: ["Instant savings", "No registration required", "Mobile app available"],
         expirationDate: "None",
         restrictions: "None",
@@ -323,7 +321,7 @@ const MEDICATIONS_DATABASE = {
         name: "WellRx",
         discount: 70,
         enrollment: "Free",
-        price: 38.99,
+        price: 3099,
         features: ["Print or digital card", "Pet medications covered", "Mail order available"],
         expirationDate: "None",
         restrictions: "None",
@@ -333,7 +331,7 @@ const MEDICATIONS_DATABASE = {
     subscriptionOptions: [
       {
         name: "Monthly Supply",
-        price: 29.99,
+        price: 2999,
         savings: 35,
         features: ["Auto-refill", "Free delivery", "24/7 support"],
         cancellationPolicy: "Cancel anytime",
@@ -342,7 +340,7 @@ const MEDICATIONS_DATABASE = {
       },
       {
         name: "90-Day Supply",
-        price: 79.99,
+        price: 7999,
         savings: 45,
         features: ["Bulk savings", "Free delivery", "Priority support"],
         cancellationPolicy: "Cancel anytime",
@@ -351,12 +349,12 @@ const MEDICATIONS_DATABASE = {
       },
     ],
     costHistory: [
-      { month: "Jan", amount: 48.99, trend: "stable" },
-      { month: "Feb", amount: 45.99, trend: "decreasing" },
-      { month: "Mar", amount: 42.99, trend: "decreasing" },
-      { month: "Apr", amount: 39.99, trend: "decreasing" },
-      { month: "May", amount: 38.99, trend: "stable" },
-      { month: "Jun", amount: 35.99, trend: "decreasing" },
+      { month: "Jan", amount: 3999, trend: "stable" },
+      { month: "Feb", amount: 3599, trend: "decreasing" },
+      { month: "Mar", amount: 3499, trend: "decreasing" },
+      { month: "Apr", amount: 3299, trend: "decreasing" },
+      { month: "May", amount: 3099, trend: "stable" },
+      { month: "Jun", amount: 2799, trend: "decreasing" },
     ],
     patientAssistance: {
       programs: [
@@ -414,6 +412,7 @@ export function DrugCostOptimizer() {
   const [selectedStrength, setSelectedStrength] = useState("")
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
   const searchRef = useRef(null)
+  const resultsSectionRef = useRef(null)
 
   // Load recent searches on mount
   useEffect(() => {
@@ -433,6 +432,13 @@ export function DrugCostOptimizer() {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  const scrollToResults = () => {
+    resultsSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    })
+  }
 
   const handleSearch = (term) => {
     setSearchTerm(term)
@@ -491,14 +497,14 @@ export function DrugCostOptimizer() {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: (context) => `$${context.raw} - ${selectedDrug.costHistory[context.dataIndex].trend}`,
+          label: (context) => `₹${context.raw} - ${selectedDrug.costHistory[context.dataIndex].trend}`,
         },
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        title: { display: true, text: "Price ($)" },
+        title: { display: true, text: "Price (₹)" },
       },
     },
   }
@@ -662,6 +668,7 @@ export function DrugCostOptimizer() {
                 onClick={() => {
                   handleSearch("Lisinopril")
                   setShowSearchDropdown(false)
+                  scrollToResults()
                 }}
                 className="w-full flex items-center justify-between p-3 rounded-lg bg-blue-50 hover:bg-blue-100 group mb-4"
               >
@@ -715,7 +722,7 @@ export function DrugCostOptimizer() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Monthly Savings</p>
-              <p className="text-2xl font-bold text-green-600">$127.50</p>
+              <p className="text-2xl font-bold text-green-600">₹9,750</p>
             </div>
             <div className="p-3 bg-green-100 rounded-full">
               <PiggyBank className="w-6 h-6 text-green-600" />
@@ -797,7 +804,7 @@ export function DrugCostOptimizer() {
 
       {/* Medication Overview */}
       {selectedDrug && (
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div ref={resultsSectionRef} className="bg-white rounded-xl shadow-lg p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Medication Info</h3>
@@ -812,7 +819,6 @@ export function DrugCostOptimizer() {
                 </div>
               </div>
             </div>
-
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Strength Selection</h3>
               <div className="flex flex-wrap gap-2">
@@ -831,15 +837,13 @@ export function DrugCostOptimizer() {
                 ))}
               </div>
             </div>
-
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Best Price</h3>{" "}
               <div className="text-3xl font-bold text-green-600">
-                ${Math.min(...selectedDrug.pharmacyPrices.map((p) => p.price))}
+                ₹{Math.min(...selectedDrug.pharmacyPrices.map((p) => p.price))}
               </div>
               <p className="text-sm text-gray-500">with discounts applied</p>
             </div>
-
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Savings Available</h3>
               <div className="space-y-2">
@@ -1014,7 +1018,7 @@ const InsurancePanel = ({ insurance, drugName }) => (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Copayment</p>
-                  <p className="text-xl font-bold text-gray-800">${insurance.copayment}</p>
+                  <p className="text-xl font-bold text-gray-800">₹{insurance.copayment}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Coverage</p>
@@ -1081,11 +1085,11 @@ const GenericPanel = ({ generic, brandName }) => (
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">Brand Name Price</p>
-              <p className="text-2xl font-bold text-gray-800">${generic.averagePrices.brand}</p>
+              <p className="text-2xl font-bold text-gray-800">₹{generic.averagePrices.brand}</p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
               <p className="text-sm text-gray-600">Generic Price</p>
-              <p className="text-2xl font-bold text-green-600">${generic.averagePrices.generic}</p>
+              <p className="text-2xl font-bold text-green-600">₹{generic.averagePrices.generic}</p>
             </div>
           </div>
         </div>
@@ -1133,12 +1137,12 @@ const PharmacyPanel = ({ pharmacies, selectedStrength }) => (
               {pharmacy.deliveryAvailable && (
                 <p className="text-green-600 flex items-center mt-1">
                   <Truck className="w-4 h-4 mr-1" />
-                  {pharmacy.deliveryFee === 0 ? "Free delivery" : `Delivery: $${pharmacy.deliveryFee}`}
+                  {pharmacy.deliveryFee === 0 ? "Free delivery" : `Delivery: ₹${pharmacy.deliveryFee}`}
                 </p>
               )}
             </div>
             <div className="text-right">
-              <p className="text-3xl font-bold text-green-600">${pharmacy.price}</p>
+              <p className="text-3xl font-bold text-green-600">₹{pharmacy.price}</p>
               <p className="text-sm text-green-500">Save {pharmacy.discount}%</p>
               {pharmacy.stock ? (
                 <span className="inline-flex items-center mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -1175,7 +1179,7 @@ const DiscountsPanel = ({ discounts, additionalSavings }) => (
               <p className="text-gray-500">Enrollment: {program.enrollment}</p>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-bold text-green-600">${program.price}</p>
+              <p className="text-3xl font-bold text-green-600">₹{program.price}</p>
               <p className="text-sm text-gray-500">with discount</p>
             </div>
           </div>
@@ -1253,7 +1257,7 @@ const SubscriptionPanel = ({ options, selectedStrength }) => (
         <div key={index} className="bg-white border rounded-xl p-6 hover:shadow-lg transition-shadow">
           <h4 className="text-xl font-semibold mb-2">{plan.name}</h4>
           <div className="mb-4">
-            <p className="text-3xl font-bold text-blue-600">${plan.price}</p>
+            <p className="text-3xl font-bold text-blue-600">₹{plan.price}</p>
             <p className="text-green-600">Save {plan.savings}%</p>
           </div>
           <ul className="space-y-3">

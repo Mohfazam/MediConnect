@@ -10,10 +10,16 @@ import {
   Info,
   Search,
   Pill,
+  DollarSign,
   Sun,
   Moon,
   Wind,
   CloudRain,
+  Clock,
+  Utensils,
+  Activity,
+  BookOpen,
+  Printer,
 } from "lucide-react"
 import PropTypes from "prop-types"
 import { Bar, Line } from "react-chartjs-2"
@@ -82,13 +88,13 @@ const mockAnalysis = {
   ],
   alternatives: ["Enalapril", "Ramipril", "Losartan"],
   foodInteractions: [
-    "Avoid excessive potassium-rich foods",
-    "Limit alcohol consumption",
-    "Avoid grapefruit and grapefruit juice",
+    { food: "Bananas", effect: "May increase potassium levels" },
+    { food: "Salt substitutes", effect: "May increase potassium levels" },
+    { food: "Alcohol", effect: "May enhance blood pressure-lowering effect" },
   ],
   storageInstructions: "Store at room temperature (68-77°F or 20-25°C) away from light and moisture",
   disposalInstructions: "Do not flush medications down the toilet. Use a medicine take-back program if available.",
-  costEstimate: "$10 - $30 per month (generic)",
+  costEstimate: "₹500 - ₹1500 per month (generic)",
   insuranceCoverage: "Commonly covered by most insurance plans",
   patientReviews: [
     { rating: 4, comment: "Helped lower my blood pressure with minimal side effects." },
@@ -115,6 +121,21 @@ const mockAnalysis = {
     disposalImpact: "Moderate",
     recyclingOptions: "Blister pack recycling available in some areas",
   },
+  halfLife: "12 hours",
+  exerciseRecommendations: [
+    "Moderate aerobic exercise for 30 minutes, 5 days a week",
+    "Light strength training, 2-3 times a week",
+    "Avoid high-intensity workouts without consulting your doctor",
+  ],
+  patientEducationMaterials: [
+    { title: "Understanding ACE Inhibitors", url: "#" },
+    { title: "Managing Hypertension", url: "#" },
+    { title: "Lifestyle Changes for Heart Health", url: "#" },
+  ],
+  adherenceTracking: {
+    lastWeek: [true, true, false, true, true, true, true],
+    overallAdherence: 85,
+  },
 }
 
 export function PrescriptionAnalyzer({ darkMode }) {
@@ -127,6 +148,7 @@ export function PrescriptionAnalyzer({ darkMode }) {
   const [showPatientReviews, setShowPatientReviews] = useState(false)
   const [showEfficacyChart, setShowEfficacyChart] = useState(false)
   const [currentWeather, setCurrentWeather] = useState(null)
+  const [adherenceData, setAdherenceData] = useState(mockAnalysis.adherenceTracking)
   const interactionsRef = useRef()
 
   const handleFileChange = (event) => {
@@ -154,6 +176,7 @@ export function PrescriptionAnalyzer({ darkMode }) {
     setSelectedTimeOfDay("morning")
     setShowPatientReviews(false)
     setShowEfficacyChart(false)
+    setAdherenceData(mockAnalysis.adherenceTracking)
   }
 
   const toggleSection = (section) => {
@@ -184,6 +207,18 @@ export function PrescriptionAnalyzer({ darkMode }) {
       default:
         return null
     }
+  }
+
+  const toggleAdherence = (index) => {
+    setAdherenceData((prev) => {
+      const newLastWeek = [...prev.lastWeek]
+      newLastWeek[index] = !newLastWeek[index]
+      const adherencePercentage = (newLastWeek.filter(Boolean).length / 7) * 100
+      return {
+        lastWeek: newLastWeek,
+        overallAdherence: Math.round(adherencePercentage),
+      }
+    })
   }
 
   useEffect(() => {
@@ -643,7 +678,12 @@ export function PrescriptionAnalyzer({ darkMode }) {
                     value={analysisResult.disposalInstructions}
                     darkMode={darkMode}
                   />
-                  <InfoCard label="Cost Estimate" value={analysisResult.costEstimate} darkMode={darkMode} />
+                  <InfoCard
+                    label="Cost Estimate"
+                    value={analysisResult.costEstimate}
+                    darkMode={darkMode}
+                    icon={<DollarSign className="w-5 h-5 text-green-500" />}
+                  />
                   <InfoCard label="Insurance Coverage" value={analysisResult.insuranceCoverage} darkMode={darkMode} />
                 </div>
               </div>
@@ -670,6 +710,117 @@ export function PrescriptionAnalyzer({ darkMode }) {
                     darkMode={darkMode}
                   />
                 </div>
+              </div>
+
+              {/* New: Half-Life Information */}
+              <div className="mt-8">
+                <h4 className={`text-xl font-semibold mb-4 text-blue-600 ${darkMode ? "dark:text-blue-400" : ""}`}>
+                  Pharmacokinetics
+                </h4>
+                <div className="flex items-center space-x-2">
+                  <Clock className="w-6 h-6 text-blue-500" />
+                  <span className={`font-medium ${darkMode ? "text-gray-200" : "text-gray-700"}`}>Half-Life:</span>
+                  <span className={darkMode ? "text-gray-300" : "text-gray-600"}>{analysisResult.halfLife}</span>
+                </div>
+              </div>
+
+              {/* New: Food Interactions */}
+              <div className="mt-8">
+                <h4 className={`text-xl font-semibold mb-4 text-blue-600 ${darkMode ? "dark:text-blue-400" : ""}`}>
+                  Food Interactions
+                </h4>
+                <ul className="space-y-2">
+                  {analysisResult.foodInteractions.map((interaction, index) => (
+                    <li
+                      key={index}
+                      className={`flex items-start space-x-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}
+                    >
+                      <Utensils className="w-5 h-5 mt-1 text-orange-500 flex-shrink-0" />
+                      <div>
+                        <span className="font-medium">{interaction.food}:</span> {interaction.effect}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* New: Exercise Recommendations */}
+              <div className="mt-8">
+                <h4 className={`text-xl font-semibold mb-4 text-blue-600 ${darkMode ? "dark:text-blue-400" : ""}`}>
+                  Exercise Recommendations
+                </h4>
+                <ul className="space-y-2">
+                  {analysisResult.exerciseRecommendations.map((recommendation, index) => (
+                    <li
+                      key={index}
+                      className={`flex items-start space-x-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}
+                    >
+                      <Activity className="w-5 h-5 mt-1 text-green-500 flex-shrink-0" />
+                      <span>{recommendation}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* New: Patient Education Materials */}
+              <div className="mt-8">
+                <h4 className={`text-xl font-semibold mb-4 text-blue-600 ${darkMode ? "dark:text-blue-400" : ""}`}>
+                  Patient Education Materials
+                </h4>
+                <ul className="space-y-2">
+                  {analysisResult.patientEducationMaterials.map((material, index) => (
+                    <li key={index}>
+                      <a
+                        href={material.url}
+                        className={`flex items-center space-x-2 ${
+                          darkMode ? "text-blue-300 hover:text-blue-200" : "text-blue-600 hover:text-blue-700"
+                        }`}
+                      >
+                        <BookOpen className="w-5 h-5" />
+                        <span>{material.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* New: Adherence Tracking */}
+              <div className="mt-8">
+                <h4 className={`text-xl font-semibold mb-4 text-blue-600 ${darkMode ? "dark:text-blue-400" : ""}`}>
+                  Adherence Tracking
+                </h4>
+                <div className="flex justify-between items-center mb-4">
+                  <div className={`text-lg font-medium ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
+                    Overall Adherence: {adherenceData.overallAdherence}%
+                  </div>
+                  <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Last 7 days</div>
+                </div>
+                <div className="flex justify-between">
+                  {adherenceData.lastWeek.map((taken, index) => (
+                    <button
+                      key={index}
+                      onClick={() => toggleAdherence(index)}
+                      className={`w-8 h-8 rounded-full ${
+                        taken ? (darkMode ? "bg-green-500" : "bg-green-600") : darkMode ? "bg-gray-600" : "bg-gray-300"
+                      }`}
+                    >
+                      {taken && <CheckCircle className="w-6 h-6 text-white mx-auto" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Print Prescription Summary */}
+              <div className="mt-8 flex justify-center">
+                <button
+                  onClick={() => window.print()}
+                  className={`flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ${
+                    darkMode ? "dark:bg-blue-500 dark:hover:bg-blue-600" : ""
+                  }`}
+                >
+                  <Printer className="w-5 h-5" />
+                  <span>Print Prescription Summary</span>
+                </button>
               </div>
 
               {/* New: Weather Information */}
@@ -699,7 +850,7 @@ export function PrescriptionAnalyzer({ darkMode }) {
   )
 }
 
-const InfoCard = ({ label, value, darkMode, highlight }) => (
+const InfoCard = ({ label, value, darkMode, highlight, icon }) => (
   <div
     className={`p-3 rounded-lg ${
       highlight
@@ -711,8 +862,12 @@ const InfoCard = ({ label, value, darkMode, highlight }) => (
           : "bg-gray-100"
     }`}
   >
-    <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>{label}</div>
-    <div className={`font-semibold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{value}</div>
+    <div className="flex items-center justify-between">
+      <div className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+        {icon} {label}
+      </div>
+      <div className={`font-semibold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{value}</div>
+    </div>
   </div>
 )
 
@@ -988,5 +1143,4 @@ PrescriptionAnalyzer.propTypes = {
 PrescriptionAnalyzer.defaultProps = {
   darkMode: false,
 }
-
 
