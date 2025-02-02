@@ -9,6 +9,7 @@ import {
   Route,
 } from "react-router-dom";
 import {DrugCostOptimizer} from './components/DrugCostOptimizer'
+import {SeriousMedications} from './components/seriousmedications'
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/DrugCostOptimizer",
     element: <DrugCostOptimizer />,
+  },
+  {
+    path: "/SeriousMedications",
+    element: <SeriousMedications />,
   },
 ]);
 
