@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion"
 import {
   AlertTriangle,
   Skull,
@@ -11,10 +11,13 @@ import {
   History,
   PillIcon,
   Shield,
-  Calendar,
   ExternalLink,
+  Share2,
+  Bell,
+  Zap,
+  Eye,
 } from "lucide-react"
-import { Navbar } from "./Navbar" // Import the Navbar component
+import { Navbar } from "./Navbar"
 
 // Sample data structure for serious medications
 const FLAGGED_MEDICATIONS = [
@@ -119,16 +122,52 @@ const EVIDENCE_COLORS = {
   Limited: "bg-orange-500",
 }
 
-export function SeriousMedications() {
+export default function SeriousMedications() {
   const [darkMode, setDarkMode] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedOrganization, setSelectedOrganization] = useState("all")
   const [expandedMedication, setExpandedMedication] = useState(null)
   const [sortBy, setSortBy] = useState("badEffectScore")
+  const [showNotification, setShowNotification] = useState(false)
+  const [notifications, setNotifications] = useState([])
+  const [isComparing, setIsComparing] = useState(false)
+  const [selectedForComparison, setSelectedForComparison] = useState([])
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  })
+
+  // Simulated real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const randomMed = FLAGGED_MEDICATIONS[Math.floor(Math.random() * FLAGGED_MEDICATIONS.length)]
+      const newNotification = {
+        id: Date.now(),
+        title: `Update for ${randomMed.name}`,
+        message: `New safety data available for ${randomMed.name}`,
+        timestamp: new Date().toISOString(),
+      }
+      setNotifications((prev) => [newNotification, ...prev].slice(0, 5))
+      setShowNotification(true)
+      setTimeout(() => setShowNotification(false), 3000)
+    }, 30000) // Every 30 seconds
+
+    return () => clearInterval(interval)
+  }, [])
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
+  }
+
+  const handleCompareSelect = (medId) => {
+    if (selectedForComparison.includes(medId)) {
+      setSelectedForComparison((prev) => prev.filter((id) => id !== medId))
+    } else if (selectedForComparison.length < 2) {
+      setSelectedForComparison((prev) => [...prev, medId])
+    }
   }
 
   // Get unique categories
@@ -147,20 +186,85 @@ export function SeriousMedications() {
     return matchesSearch && matchesCategory && matchesOrganization
   }).sort((a, b) => b[sortBy] - a[sortBy])
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { duration: 0.3 },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+  }
+
   return (
     <div className={darkMode ? "dark" : ""}>
       <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+
+      {/* Progress Bar */}
+      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-blue-600 dark:bg-blue-400 z-50" style={{ scaleX }} />
+
+      {/* Notification Toast */}
+      <AnimatePresence>
+        {showNotification && notifications[0] && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-4 right-4 z-50 bg-blue-600 dark:bg-blue-500 text-white p-4 rounded-lg shadow-lg"
+          >
+            <div className="flex items-center gap-2">
+              <Bell className="w-5 h-5" />
+              <div>
+                <h4 className="font-semibold">{notifications[0].title}</h4>
+                <p className="text-sm">{notifications[0].message}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
         <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Floating Action Button */}
+          <button
+            onClick={() => setIsComparing(!isComparing)}
+            className="fixed bottom-6 right-6 bg-blue-600 dark:bg-blue-500 text-white p-4 rounded-full shadow-lg z-40 transition-transform hover:scale-105 active:scale-95"
+          >
+            <Share2 className="w-6 h-6" />
+          </button>
+
+          {/* Compare Mode Banner */}
+          <AnimatePresence>
+            {isComparing && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-6"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <span>Compare Mode: Select two medications to compare</span>
+                  </div>
+                  <span className="text-sm">{selectedForComparison.length}/2 selected</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Header */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4 mb-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 rounded-lg text-white">
             <div className="flex items-center gap-3">
-              <AlertOctagon className="w-12 h-12 text-red-500" />
+              <AlertOctagon className="w-12 h-12" />
               <div>
                 <h1 className="text-3xl font-bold">Serious Medications Watch</h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Tracking medications with significant health concerns and regulatory warnings
-                </p>
+                <p className="text-gray-100">Real-time tracking of medications with significant health concerns</p>
               </div>
             </div>
           </div>
@@ -253,14 +357,14 @@ export function SeriousMedications() {
           </div>
 
           {/* Medications List */}
-          <div className="space-y-4">
+          <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4">
             <AnimatePresence>
               {filteredMedications.map((medication) => (
                 <motion.div
                   key={medication.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
+                  variants={itemVariants}
+                  layoutId={medication.id}
+                  className={`${selectedForComparison.includes(medication.id) ? "ring-2 ring-blue-500" : ""}`}
                 >
                   <div className="border dark:border-gray-700 rounded-lg overflow-hidden">
                     {/* Header */}
@@ -442,15 +546,51 @@ export function SeriousMedications() {
                           </div>
                         </div>
                       )}
+
+                      {/* Recent Activity */}
+                      <div className="p-4 border-t dark:border-gray-700">
+                        <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                          <History className="w-4 h-4" />
+                          Recent Activity
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">Last Updated</span>
+                            <span className="font-medium">
+                              {new Date(medication.recentUpdates[0]?.date).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">Affected Batches</span>
+                            <span className="font-medium">{medication.affectedBatches}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Footer */}
+                    {/* Interactive Footer */}
                     <div className="bg-gray-50 dark:bg-gray-800 border-t dark:border-gray-700 p-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <Calendar className="w-4 h-4" />
-                        Identified: {new Date(medication.dateIdentified).toLocaleDateString()}
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => handleCompareSelect(medication.id)}
+                          className={`p-2 rounded-full transition-colors duration-200 ${
+                            selectedForComparison.includes(medication.id)
+                              ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
+                              : "bg-gray-100 dark:bg-gray-700"
+                          }`}
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 transition-transform hover:scale-105 active:scale-95"
+                          onClick={() => {
+                            // Add to watchlist functionality
+                          }}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                       </div>
-                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 text-sm">
+                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 text-sm transition-transform hover:scale-105 active:scale-95">
                         Learn More <ExternalLink className="w-4 h-4" />
                       </button>
                     </div>
@@ -458,7 +598,7 @@ export function SeriousMedications() {
                 </motion.div>
               ))}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
