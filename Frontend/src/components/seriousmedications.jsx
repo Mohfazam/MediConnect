@@ -122,7 +122,7 @@ const EVIDENCE_COLORS = {
   Limited: "bg-orange-500",
 }
 
-export default function SeriousMedications() {
+export function SeriousMedications() {
   const [darkMode, setDarkMode] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
