@@ -438,6 +438,13 @@ export function Landing() {
             >
               <button onClick={()=>navigate("/SeriousMedications")}>Serious Medication</button>
             </motion.button>
+            <motion.button
+              className="bg-blue-600 dark:bg-blue-700 text-white font-bold py-3 px-8 rounded-full hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <button onClick={()=>navigate("/Signup")}>Signup</button>
+            </motion.button>
 
             
           </div>
