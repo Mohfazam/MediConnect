@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const server_url = import.meta.env.VITE_SERVER_URL;
+const local_url = 'http://localhost:3000/';
+
 export const Login = () => {
     const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false)
@@ -27,7 +30,7 @@ export const Login = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:3000/api/login", formData);
+      const response = await axios.post(`${server_url}login`, formData);
 
       if (response.status === 200) {
         alert("Logged in successfully!")
