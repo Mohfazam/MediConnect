@@ -10,10 +10,16 @@ import {
 } from "react-router-dom";
 import {DrugCostOptimizer} from './components/DrugCostOptimizer'
 import {SeriousMedications} from './components/seriousmedications'
+import {Login} from './components/Login'
+import {Signup} from './components/Signup'
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/Landing",
     element: <Landing />,
   },
   {
@@ -27,6 +33,14 @@ const router = createBrowserRouter([
   {
     path: "/SeriousMedications",
     element: <SeriousMedications />,
+  },
+  {
+    path: "/Signup",
+    element: <Signup/>,
+  },
+  {
+    path: "/Login",
+    element: <Login />,
   },
 ]);
 
