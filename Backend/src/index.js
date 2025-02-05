@@ -11,7 +11,11 @@ const MONGO_URL = process.env.MONGO_URL;
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors({
+  origin: '*', // Allow all origins for testing purposes. Change this to your frontend's origin in production.
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
 
 // Connect to MongoDB (replace with your actual connection string)
 mongoose.connect(MONGO_URL);
