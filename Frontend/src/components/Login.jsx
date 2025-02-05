@@ -1,51 +1,49 @@
-import { useState } from "react"
-import { Eye, EyeOff, LogIn, Sun, Moon } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react";
+import { Eye, EyeOff, LogIn, Sun, Moon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const server_url = import.meta.env.VITE_SERVER_URL;
-const local_url = 'http://localhost:3000/';
 
 export const Login = () => {
-    const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate();
+  const [isDark, setIsDark] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
-  const [isLoading, setIsLoading] = useState(false)
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const toggleTheme = () => setIsDark(!isDark)
-  const togglePasswordVisibility = () => setShowPassword(!showPassword)
+  const toggleTheme = () => setIsDark(!isDark);
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${server_url}api/login`, formData);
 
       if (response.status === 200) {
-        alert("Logged in successfully!")
+        alert("Logged in successfully!");
         // You might want to redirect the user or update the app state here
         navigate("/Landing");
       } else {
-        const errorData = await response.json()
-        alert(`Error: ${errorData.message || "Invalid credentials"}`)
+        alert(`Error: ${response.data.message || "Invalid credentials"}`);
       }
     } catch (error) {
-      alert(`Error: ${error.message}`)
+      alert(`Error: ${error.response?.data?.message || error.message}`);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div
@@ -155,6 +153,7 @@ export const Login = () => {
         </form>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
+export default Login;
