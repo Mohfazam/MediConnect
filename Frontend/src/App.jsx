@@ -12,6 +12,8 @@ import {DrugCostOptimizer} from './components/DrugCostOptimizer'
 import {SeriousMedications} from './components/seriousmedications'
 import {Login} from './components/Login'
 import {Signup} from './components/Signup'
+import {MedEd} from './components/MedEd'
+import {MedAI} from './components/MedAI'
 
 const router = createBrowserRouter([
   {
@@ -42,13 +44,14 @@ const router = createBrowserRouter([
     path: "/Login",
     element: <Login />,
   },
-  // {
-  //   path: "/meded",
-  //   element: <Meded />,
-  // },{
-  //   path: "/chatbot",
-  //   element: <Chatbot/>,
-  // },
+  {
+    path: "/meded",
+    element: <MedEd />,
+  },
+  {
+    path: "/chatbot",
+    element: <MedAI />,
+  },
 ]);
 
 function App() {

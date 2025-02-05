@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@tailwindcss/vite": "^4.0.2",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.3",
