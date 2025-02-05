@@ -24,7 +24,9 @@ export const Navbar = () => {
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-md p-4 sticky top-0 z-40 transition-colors duration-300">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">MediConnect</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+          <button onClick={() => handleNavigation('/Landing')}>MediConnect</button>
+        </h1>
         <div className="flex items-center">
           <button
             onClick={toggleTheme}
