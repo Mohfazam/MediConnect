@@ -1,13 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AnimatePresence } from "framer-motion"
 import { Search, AlertOctagon, Globe, Shield, HeartPulse, Plus } from "lucide-react"
 import { Navbar } from "./Navbar"
-import {AddMedicationForm} from "./addmedicationform"
-import {MedicationCard} from "./medicationcard"
+import { AddMedicationForm } from "./addmedicationform"
+import { MedicationCard } from "./medicationcard"
+import axios from "axios"
 
-// Sample Data
+const server_url = import.meta.env.VITE_SERVER_URL;
+
+// Organization definitions
 const ORGANIZATIONS = [
   {
     name: "WHO",
@@ -26,54 +29,6 @@ const ORGANIZATIONS = [
   },
 ]
 
-// Initial flagged medications data
-const INITIAL_MEDICATIONS = [
-  {
-    id: "1",
-    name: "Medication A",
-    genericName: "Generic A",
-    badEffectScore: 80,
-    flaggedByScore: 70,
-    category: "Analgesics",
-    organizations: ["WHO", "FDA"],
-    incidents: [
-      {
-        date: "2023-10-26",
-        description: "Incident 1 description",
-        severity: 2,
-        location: "USA",
-        affectedPatients: 100,
-      },
-    ],
-    alternatives: ["Medication X", "Medication Y"],
-    warnings: ["Warning 1", "Warning 2"],
-    recentUpdates: ["Update 1", "Update 2"],
-    status: "Warning Issued",
-  },
-  {
-    id: "2",
-    name: "Medication B",
-    genericName: "Generic B",
-    badEffectScore: 95,
-    flaggedByScore: 90,
-    category: "Antibiotics",
-    organizations: ["FDA"],
-    incidents: [
-      {
-        date: "2023-11-15",
-        description: "Incident 2 description",
-        severity: 3,
-        location: "India",
-        affectedPatients: 50,
-      },
-    ],
-    alternatives: ["Medication Z"],
-    warnings: ["Warning 3"],
-    recentUpdates: ["Update 3"],
-    status: "Banned",
-  },
-]
-
 export function SeriousMedications() {
   const [darkMode, setDarkMode] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -81,17 +36,38 @@ export function SeriousMedications() {
   const [selectedOrganization, setSelectedOrganization] = useState("all")
   const [sortBy, setSortBy] = useState("badEffectScore")
   const [showAddForm, setShowAddForm] = useState(false)
-  const [medications, setMedications] = useState(INITIAL_MEDICATIONS)
+  const [medications, setMedications] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // Fetch medications from the API
+  useEffect(() => {
+    const fetchMedications = async () => {
+      try {
+        const response = await axios.get(`${server_url}api/medications`);
+        setMedications(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching medications:", err);
+        setError("Error fetching medications. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchMedications();
+  }, []);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
   }
 
-  // Get unique categories
+  // Get unique categories from actual data
   const categories = Array.from(new Set(medications.map((med) => med.category)))
 
-  // Get unique organizations
-  const organizations = Array.from(new Set(medications.flatMap((med) => med.organizations)))
+  // Get unique organizations from actual data
+  const organizations = Array.from(
+    new Set(medications.flatMap((med) => med.organizations.map(org => org.organization)))
+  )
 
   // Filter and sort medications
   const filteredMedications = medications
@@ -100,13 +76,30 @@ export function SeriousMedications() {
         med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         med.category.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesCategory = selectedCategory === "all" || med.category === selectedCategory
-      const matchesOrganization = selectedOrganization === "all" || med.organizations.includes(selectedOrganization)
+      const matchesOrganization = selectedOrganization === "all" || 
+        med.organizations.some(org => org.organization === selectedOrganization)
       return matchesSearch && matchesCategory && matchesOrganization
     })
     .sort((a, b) => b[sortBy] - a[sortBy])
 
   const handleAddMedication = (newMedication) => {
-    setMedications((prev) => [newMedication, ...prev]) // Add new medication at the beginning
+    setMedications((prev) => [newMedication, ...prev])
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500 text-xl">{error}</div>
+      </div>
+    );
   }
 
   return (
@@ -152,7 +145,9 @@ export function SeriousMedications() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">{org.description}</p>
                   <div className="mt-4">
                     <div className="text-2xl font-bold text-red-600 dark:text-red-500">
-                      {medications.filter((med) => med.organizations.includes(org.name)).length}
+                      {medications.filter((med) => 
+                        med.organizations && med.organizations.some(o => o.organization === org.name)
+                      ).length}
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Flagged Medications</p>
                   </div>
@@ -224,7 +219,7 @@ export function SeriousMedications() {
           <div className="grid grid-cols-1 gap-6 mt-8">
             <AnimatePresence>
               {filteredMedications.map((medication) => (
-                <MedicationCard key={medication.id} medication={medication} />
+                <MedicationCard key={medication._id || medication.id} medication={medication} />
               ))}
             </AnimatePresence>
           </div>
@@ -233,4 +228,3 @@ export function SeriousMedications() {
     </div>
   )
 }
-

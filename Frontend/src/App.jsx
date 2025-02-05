@@ -42,6 +42,13 @@ const router = createBrowserRouter([
     path: "/Login",
     element: <Login />,
   },
+  // {
+  //   path: "/meded",
+  //   element: <Meded />,
+  // },{
+  //   path: "/chatbot",
+  //   element: <Chatbot/>,
+  // },
 ]);
 
 function App() {

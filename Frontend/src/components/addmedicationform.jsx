@@ -1,38 +1,97 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Plus, Minus, Loader } from "lucide-react"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Plus, Minus, Loader } from "lucide-react";
+import axios from "axios";
+
+const server_url = import.meta.env.VITE_SERVER_URL;
 
 export function AddMedicationForm({ onClose, onSubmit }) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
+    genericName: '',
+    category: '',
+    status: '',
+    badEffectScore: '',
+    flaggedByScore: '',
     organizations: [],
     healthImpacts: [],
     alternatives: [],
     recentUpdates: [],
     incidents: [],
     warnings: [],
-  })
+    addedBy: 'Sarwar', // Hardcoded addedBy field
+  });
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleArrayChange = (e, field, index) => {
+    const { value } = e.target;
+    const updatedArray = [...formData[field]];
+    updatedArray[index] = value;
+    setFormData({ ...formData, [field]: updatedArray });
+  };
+
+  const handleAddField = (field) => {
+    setFormData({ ...formData, [field]: [...formData[field], ''] });
+  };
+
+  const handleRemoveField = (field, index) => {
+    const updatedArray = [...formData[field]];
+    updatedArray.splice(index, 1);
+    setFormData({ ...formData, [field]: updatedArray });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      const medication = {
-        id: Date.now().toString(),
+      // Transform the data to match the schema
+      const medicationData = {
         ...formData,
-      }
+        // Transform organizations to include flaggedAt
+        organizations: formData.organizations.map((org) => ({
+          organization: org,
+          flaggedAt: new Date(),
+        })),
+        // Transform alternatives to include name and category
+        alternatives: formData.alternatives.map((alt) => ({
+          name: alt,
+          category: formData.category,
+        })),
+        // Transform warnings to include required fields
+        warnings: formData.warnings.map((warning) => ({
+          content: warning,
+          source: "System",
+          issuedAt: new Date(),
+        })),
+      };
 
-      onSubmit(medication)
-      onClose()
+      // Direct axios call to the backend
+      const response = await axios.post(`${server_url}api/medications`, medicationData);
+      onSubmit(response.data);
+      onClose();
     } catch (error) {
-      alert("Failed to add medication")
+      console.error("Error adding medication:", error);
+      if (error.response) {
+        alert(error.response.data.error || "Failed to add medication");
+      } else {
+        alert("Failed to add medication. Please try again.");
+      }
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const addHealthImpact = () => {
     setFormData((prev) => ({
@@ -41,15 +100,15 @@ export function AddMedicationForm({ onClose, onSubmit }) {
         ...(prev.healthImpacts || []),
         { type: "", description: "", severity: "Moderate", evidenceLevel: "Moderate" },
       ],
-    }))
-  }
+    }));
+  };
 
   const removeHealthImpact = (index) => {
     setFormData((prev) => ({
       ...prev,
       healthImpacts: prev.healthImpacts?.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   const addIncident = () => {
     setFormData((prev) => ({
@@ -57,22 +116,22 @@ export function AddMedicationForm({ onClose, onSubmit }) {
       incidents: [
         ...(prev.incidents || []),
         {
-          date: new Date().toISOString().split("T")[0],
+          occuredAt: new Date().toISOString().split("T")[0],
           description: "",
           severity: 1,
           location: "",
           affectedPatients: 0,
         },
       ],
-    }))
-  }
+    }));
+  };
 
   const removeIncident = (index) => {
     setFormData((prev) => ({
       ...prev,
       incidents: prev.incidents?.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 overflow-y-auto">
@@ -94,7 +153,6 @@ export function AddMedicationForm({ onClose, onSubmit }) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Medication Name</label>
@@ -118,7 +176,6 @@ export function AddMedicationForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Category and Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Category</label>
@@ -147,7 +204,6 @@ export function AddMedicationForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Risk Scores */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Bad Effect Score (0-100)</label>
@@ -175,7 +231,6 @@ export function AddMedicationForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Organizations */}
             <div>
               <label className="block text-sm font-medium mb-1">Organizations</label>
               <div className="flex flex-wrap gap-2">
@@ -190,12 +245,12 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                           setFormData((prev) => ({
                             ...prev,
                             organizations: [...(prev.organizations || []), org],
-                          }))
+                          }));
                         } else {
                           setFormData((prev) => ({
                             ...prev,
                             organizations: prev.organizations?.filter((o) => o !== org),
-                          }))
+                          }));
                         }
                       }}
                     />
@@ -205,7 +260,6 @@ export function AddMedicationForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Health Impacts */}
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-sm font-medium">Health Impacts</label>
@@ -228,9 +282,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                         className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                         value={impact.type}
                         onChange={(e) => {
-                          const newImpacts = [...(formData.healthImpacts || [])]
-                          newImpacts[index] = { ...impact, type: e.target.value }
-                          setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }))
+                          const newImpacts = [...(formData.healthImpacts || [])];
+                          newImpacts[index] = { ...impact, type: e.target.value };
+                          setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }));
                         }}
                       />
                       <input
@@ -240,9 +294,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                         className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                         value={impact.description}
                         onChange={(e) => {
-                          const newImpacts = [...(formData.healthImpacts || [])]
-                          newImpacts[index] = { ...impact, description: e.target.value }
-                          setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }))
+                          const newImpacts = [...(formData.healthImpacts || [])];
+                          newImpacts[index] = { ...impact, description: e.target.value };
+                          setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }));
                         }}
                       />
                       <div className="flex gap-2">
@@ -251,9 +305,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                           className="flex-1 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                           value={impact.severity}
                           onChange={(e) => {
-                            const newImpacts = [...(formData.healthImpacts || [])]
-                            newImpacts[index] = { ...impact, severity: e.target.value }
-                            setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }))
+                            const newImpacts = [...(formData.healthImpacts || [])];
+                            newImpacts[index] = { ...impact, severity: e.target.value };
+                            setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }));
                           }}
                         >
                           <option value="High">High</option>
@@ -265,9 +319,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                           className="flex-1 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                           value={impact.evidenceLevel}
                           onChange={(e) => {
-                            const newImpacts = [...(formData.healthImpacts || [])]
-                            newImpacts[index] = { ...impact, evidenceLevel: e.target.value }
-                            setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }))
+                            const newImpacts = [...(formData.healthImpacts || [])];
+                            newImpacts[index] = { ...impact, evidenceLevel: e.target.value };
+                            setFormData((prev) => ({ ...prev, healthImpacts: newImpacts }));
                           }}
                         >
                           <option value="Strong">Strong</option>
@@ -288,7 +342,6 @@ export function AddMedicationForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Incidents */}
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-sm font-medium">Incidents</label>
@@ -308,11 +361,11 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                         type="date"
                         required
                         className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                        value={incident.date}
+                        value={incident.occuredAt?.split("T")[0]}
                         onChange={(e) => {
-                          const newIncidents = [...(formData.incidents || [])]
-                          newIncidents[index] = { ...incident, date: e.target.value }
-                          setFormData((prev) => ({ ...prev, incidents: newIncidents }))
+                          const newIncidents = [...(formData.incidents || [])];
+                          newIncidents[index] = { ...incident, occuredAt: e.target.value };
+                          setFormData((prev) => ({ ...prev, incidents: newIncidents }));
                         }}
                       />
                       <input
@@ -322,9 +375,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                         className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                         value={incident.description}
                         onChange={(e) => {
-                          const newIncidents = [...(formData.incidents || [])]
-                          newIncidents[index] = { ...incident, description: e.target.value }
-                          setFormData((prev) => ({ ...prev, incidents: newIncidents }))
+                          const newIncidents = [...(formData.incidents || [])];
+                          newIncidents[index] = { ...incident, description: e.target.value };
+                          setFormData((prev) => ({ ...prev, incidents: newIncidents }));
                         }}
                       />
                       <div className="flex gap-2">
@@ -335,9 +388,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                           className="flex-1 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                           value={incident.location}
                           onChange={(e) => {
-                            const newIncidents = [...(formData.incidents || [])]
-                            newIncidents[index] = { ...incident, location: e.target.value }
-                            setFormData((prev) => ({ ...prev, incidents: newIncidents }))
+                            const newIncidents = [...(formData.incidents || [])];
+                            newIncidents[index] = { ...incident, location: e.target.value };
+                            setFormData((prev) => ({ ...prev, incidents: newIncidents }));
                           }}
                         />
                         <input
@@ -348,9 +401,9 @@ export function AddMedicationForm({ onClose, onSubmit }) {
                           className="flex-1 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                           value={incident.affectedPatients}
                           onChange={(e) => {
-                            const newIncidents = [...(formData.incidents || [])]
-                            newIncidents[index] = { ...incident, affectedPatients: Number(e.target.value) }
-                            setFormData((prev) => ({ ...prev, incidents: newIncidents }))
+                            const newIncidents = [...(formData.incidents || [])];
+                            newIncidents[index] = { ...incident, affectedPatients: Number(e.target.value) };
+                            setFormData((prev) => ({ ...prev, incidents: newIncidents }));
                           }}
                         />
                       </div>
@@ -367,35 +420,38 @@ export function AddMedicationForm({ onClose, onSubmit }) {
               </div>
             </div>
 
-            {/* Alternatives */}
             <div>
               <label className="block text-sm font-medium mb-1">Alternative Medications (comma-separated)</label>
               <input
                 type="text"
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                value={formData.alternatives?.join(", ") || ""}
+                value={formData.alternatives?.map((alt) => alt.name || alt).join(", ") || ""}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, alternatives: e.target.value.split(",").map((s) => s.trim()) }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    alternatives: e.target.value.split(",").map((s) => s.trim()),
+                  }))
                 }
                 placeholder="e.g. Medication A, Medication B, Medication C"
               />
             </div>
 
-            {/* Warnings */}
             <div>
               <label className="block text-sm font-medium mb-1">Warnings (comma-separated)</label>
               <input
                 type="text"
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                value={formData.warnings?.join(", ") || ""}
+                value={formData.warnings?.map((w) => w.content || w).join(", ") || ""}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, warnings: e.target.value.split(",").map((s) => s.trim()) }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    warnings: e.target.value.split(",").map((s) => s.trim()),
+                  }))
                 }
                 placeholder="e.g. Warning 1, Warning 2, Warning 3"
               />
             </div>
 
-            {/* Submit Button */}
             <div className="flex justify-end gap-4">
               <button
                 type="button"
@@ -423,6 +479,5 @@ export function AddMedicationForm({ onClose, onSubmit }) {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
-
