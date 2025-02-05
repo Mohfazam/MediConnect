@@ -74,3 +74,9 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 console.log('Server is ready to accept requests.');
+
+
+// make sure you have vercel.json in your root directory of the projects, if not then add it ( GPT can create it for you )>
+// npm i -g vercel
+// vercel login
+// vercel deploy --prod

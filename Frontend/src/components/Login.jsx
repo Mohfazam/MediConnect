@@ -30,7 +30,7 @@ export const Login = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post(`${server_url}/api/login`, formData);
+      const response = await axios.post(`${server_url}api/login`, formData);
 
       if (response.status === 200) {
         alert("Logged in successfully!")
