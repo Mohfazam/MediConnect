@@ -82,7 +82,7 @@ export const Navbar = () => {
               onClick={() => handleNavigation('/chatbot')}
               className="block py-2 md:py-0 px-4 md:px-0 text-gray-700 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300"
             >
-              MEDAI
+              MED-AI
             </button>
           </li>
         </ul>
