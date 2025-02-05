@@ -12,7 +12,7 @@ const MONGO_URL = process.env.MONGO_URL;
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: '*', // Allow all origins for testing purposes. Change this to your frontend's origin in production.
+  origin: 'https://medi-connect-delta.vercel.app', // Allow all origins for testing purposes. Change this to your frontend's origin in production.
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));

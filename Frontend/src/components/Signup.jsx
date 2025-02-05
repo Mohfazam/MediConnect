@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const server_url = import.meta.env.VITE_SERVER_URL;
+const local_url = 'http://localhost:3000/';
+
 export const Signup = () => {
     const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false)
@@ -28,7 +31,7 @@ export const Signup = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:3000/api/register", formData);
+      const response = await axios.post(`${server_url}api/register`, formData);
 
       if (response.status === 201) {
         alert("User created successfully!")
