@@ -1,9 +1,7 @@
-import { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
-  Moon,
-  Sun,
   Trash2,
   Loader,
   Bot,
@@ -13,14 +11,14 @@ import {
   Volume2,
   VolumeX,
   HelpCircle,
-} from "lucide-react"
-import { GoogleGenerativeAI } from "@google/generative-ai"
+} from "lucide-react";
+import { GoogleGenerativeAI  } from "@google/generative-ai";
+import {Navbar} from "./Navbar"; 
 
-// Replace this with your actual Gemini API key
-const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const popularEmojis = [
   "😊",
@@ -43,106 +41,132 @@ const popularEmojis = [
   "😤",
   "🥳",
   "💪",
-]
+];
 
-export const MedAI = () => {
-  const [darkMode, setDarkMode] = useState(true)
-  const [messages, setMessages] = useState([])
-  const [input, setInput] = useState("")
-  const [isTyping, setIsTyping] = useState(false)
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const inputRef = useRef(null)
-  const messagesEndRef = useRef(null)
-
-  const toggleDarkMode = () => setDarkMode(!darkMode)
+export const MedAI = ({ darkMode }) => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const inputRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!input.trim()) return
+    e.preventDefault();
+    if (!input.trim()) return;
 
-    setMessages((prev) => [...prev, { role: "user", content: input }])
-    setInput("")
-    setIsTyping(true)
+    const customString = `
+      Latest Prescription Analysis:
+      - Medication: Ibuprofen
+      - Dosage: 200mg
+      - Frequency: Twice a day
+      - Duration: 7 days
+      - Notes: Take with food to avoid stomach upset.
+
+      Instructions: You are Med-AI, an AI designed to provide medical information and support. Respond like a professional doctor, providing detailed and accurate information.
+    `;
+    const combinedInput = `${customString}\n\nUser Input: ${input}`;
+
+    setMessages((prev) => [...prev, { role: "user", content: input }]);
+    setInput("");
+    setIsTyping(true);
 
     try {
-      const result = await model.generateContent(input)
-      setMessages((prev) => [...prev, { role: "assistant", content: result.response.text() }])
-    } catch (error) {
-      console.error("Error generating response:", error)
+      const result = await model.generateContent(combinedInput);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, I couldn't generate a response. Please try again." },
-      ])
+        { role: "assistant", content: result.response.text() },
+      ]);
+    } catch (error) {
+      console.error("Error generating response:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Sorry, I couldn't generate a response. Please try again.",
+        },
+      ]);
     } finally {
-      setIsTyping(false)
+      setIsTyping(false);
     }
-  }
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit(e)
+      e.preventDefault();
+      handleSubmit(e);
     }
-  }
+  };
 
   const clearChat = () => {
-    setMessages([])
-  }
+    setMessages([]);
+  };
 
   const speakMessage = (text) => {
     if ("speechSynthesis" in window) {
-      setIsSpeaking(true)
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.onend = () => setIsSpeaking(false)
-      speechSynthesis.speak(utterance)
+      setIsSpeaking(true);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => setIsSpeaking(false);
+      speechSynthesis.speak(utterance);
     }
-  }
+  };
 
   const stopSpeaking = () => {
     if ("speechSynthesis" in window) {
-      speechSynthesis.cancel()
-      setIsSpeaking(false)
+      speechSynthesis.cancel();
+      setIsSpeaking(false);
     }
-  }
+  };
 
   const toggleEmojiPicker = () => {
-    setShowEmojiPicker((prev) => !prev)
-  }
+    setShowEmojiPicker((prev) => !prev);
+  };
 
   const addEmoji = (emoji) => {
-    setInput((prev) => prev + emoji)
-    setShowEmojiPicker(false)
-    inputRef.current?.focus()
-  }
+    setInput((prev) => prev + emoji);
+    setShowEmojiPicker(false);
+    inputRef.current?.focus();
+  };
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     if (file) {
-      setMessages((prev) => [...prev, { role: "user", content: `Uploaded file: ${file.name}` }])
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: `Uploaded file: ${file.name}` },
+      ]);
     }
-  }
+  };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messagesEndRef]) //Corrected dependency
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
-    <div className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"}`}>
+    <div
+      className={`min-h-screen ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      }`}
+    >
+      <Navbar /> {/* Include the Navbar component */}
       <div className="container mx-auto p-4 max-w-4xl">
+      <motion.h1
+            className="text-4xl font-bold text-center mb-8 text-blue-600 dark:text-blue-400"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            MED-AI: AI-Powered Medical Assistance
+          </motion.h1>
         <div
-          className={`bg-gradient-to-r ${darkMode ? "from-blue-600 to-purple-600" : "from-blue-400 to-purple-500"} rounded-lg shadow-xl p-6 mb-6`}
+          className={`bg-gradient-to-r ${
+            darkMode ? "from-blue-600 to-purple-600" : "from-blue-400 to-purple-500"
+          } rounded-lg shadow-xl p-6 mb-6`}
         >
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-white">Med-AI Chatbot</h2>
             <div className="flex space-x-3">
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 text-white"
-                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
               <button onClick={clearChat} className="p-2 text-white" aria-label="Clear chat">
                 <Trash2 size={20} />
               </button>
@@ -163,7 +187,9 @@ export const MedAI = () => {
           </p>
         </div>
         <div
-          className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 h-[60vh] overflow-y-auto mb-6 ${darkMode ? "scrollbar-dark" : "scrollbar-light"}`}
+          className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 h-[60vh] overflow-y-auto mb-6 ${
+            darkMode ? "scrollbar-dark" : "scrollbar-light"
+          }`}
         >
           <AnimatePresence>
             {messages.map((message, index) => (
@@ -184,8 +210,8 @@ export const MedAI = () => {
                     message.role === "user"
                       ? "bg-blue-500 text-white"
                       : darkMode
-                        ? "bg-gray-700 text-white"
-                        : "bg-gray-200 text-gray-800"
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-200 text-gray-800"
                   }`}
                 >
                   <p>{message.content}</p>
@@ -269,7 +295,5 @@ export const MedAI = () => {
         </div>
       </div>
     </div>
-  )
-}
-
-
+  );
+};
