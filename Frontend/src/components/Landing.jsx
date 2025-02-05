@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react"
 import {
   motion,
   AnimatePresence,
@@ -8,159 +8,134 @@ import {
   useMotionValue,
   useSpring,
   useAnimationFrame,
-} from "framer-motion";
-import {
-  Shield,
-  Upload,
-  Search,
-  FileText,
-  Pill,
-  MessageCircle,
-  Calendar,
-  ClipboardList,
-  BookOpen,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import { Navbar } from "./Navbar";
-import { useNavigate } from "react-router-dom";
-import female from "../assets/female.svg";
-import male from "../assets/male.svg";
+} from "framer-motion"
+import { Shield, DollarSign, AlertTriangle, BookOpen, MessageCircle, ChevronDown, ChevronUp } from "lucide-react"
+import { Navbar } from "./Navbar"
+import { useNavigate } from "react-router-dom"
+import female from "../assets/female.svg"
+import male from "../assets/male.svg"
 
 const features = [
   {
     icon: Shield,
-    title: "Medication Safety Check",
-    description:
-      "AI-powered analysis to detect potential drug interactions and side effects.",
+    title: "Prescription Analyzer",
+    description: "AI-powered analysis to detect potential drug interactions and side effects.",
   },
   {
-    icon: MessageCircle,
-    title: "Doctor-Patient Chat",
-    description:
-      "Secure messaging platform for direct communication with your healthcare provider.",
+    icon: DollarSign,
+    title: "Drug Cost Analyzer",
+    description: "Compare medication costs and find affordable alternatives.",
   },
   {
-    icon: Calendar,
-    title: "Appointment Scheduler",
-    description:
-      "Easy-to-use interface for booking and managing doctor appointments.",
-  },
-  {
-    icon: ClipboardList,
-    title: "Symptom Tracker",
-    description:
-      "Log and monitor your symptoms to share accurate information with your doctor.",
-  },
-  {
-    icon: Pill,
-    title: "Medication Reminders",
-    description:
-      "Set personalized alerts to never miss a dose of your prescribed medications.",
+    icon: AlertTriangle,
+    title: "Serious Medication Info",
+    description: "Detailed information on high-risk medications and their management.",
   },
   {
     icon: BookOpen,
-    title: "Health Education Library",
-    description:
-      "Access to reliable, doctor-approved health information and resources.",
+    title: "MedEd",
+    description: "Comprehensive educational resources about drugs and treatments.",
   },
-];
+  {
+    icon: MessageCircle,
+    title: "Med-Related Chatbot",
+    description: "24/7 AI assistant for medication-related queries and support.",
+  },
+]
 
 const steps = [
   {
-    icon: Upload,
-    title: "Upload Prescription",
-    description: "Snap a photo or upload an image of your prescription.",
+    icon: Shield,
+    title: "Analyze Prescription",
+    description: "Upload your prescription for AI-powered analysis of potential issues.",
   },
   {
-    icon: Search,
-    title: "AI Analysis",
-    description:
-      "Our advanced AI analyzes the prescription for potential issues.",
+    icon: DollarSign,
+    title: "Compare Costs",
+    description: "Find the most cost-effective options for your medications.",
   },
   {
-    icon: FileText,
-    title: "Get Insights",
-    description:
-      "Receive a detailed report and connect with your doctor if needed.",
+    icon: BookOpen,
+    title: "Learn and Understand",
+    description: "Access comprehensive information about your medications and health conditions.",
   },
-];
+]
 
 const testimonials = [
   {
     quote:
-      "This app has revolutionized how I manage my health. The direct line to my doctor is invaluable!",
+      "MediConnect has revolutionized how I manage my medications. The prescription analyzer caught a potential interaction I wasn't aware of!",
     author: "Emily R., Patient",
     avatar: female,
   },
   {
     quote:
-      "As a physician, this platform helps me provide more personalized and efficient care to my patients.",
+      "As a physician, I appreciate how MediConnect empowers my patients with knowledge about their medications and potential alternatives.",
     author: "Dr. James L., Cardiologist",
     avatar: male,
   },
   {
     quote:
-      "The medication reminders have been a game-changer for my elderly parents. It gives me peace of mind.",
-    author: "Sarah T., Caregiver",
+      "The drug cost analyzer helped me find a more affordable option for my chronic medication. It's been a game-changer for my budget.",
+    author: "Sarah T., Patient",
     avatar: female,
   },
   {
     quote:
-      "The symptom tracker has helped me communicate more effectively with my doctor about my chronic condition.",
+      "The med-related chatbot has been incredibly helpful for quick questions about my prescriptions. It's like having a pharmacist on call 24/7.",
     author: "Michael K., Patient",
     avatar: male,
   },
-];
+]
 
 const faqItems = [
   {
-    question: "How secure is my medical information on MediConnect?",
+    question: "How accurate is the prescription analyzer?",
     answer:
-      "We take your privacy seriously. MediConnect uses state-of-the-art encryption and follows all HIPAA guidelines to ensure your medical information is always secure and confidential.",
+      "Our prescription analyzer uses advanced AI algorithms and is regularly updated with the latest medical data. While it's highly accurate, it's designed to be a supportive tool and should not replace professional medical advice.",
   },
   {
-    question: "Can I use MediConnect with my current healthcare provider?",
+    question: "Is my medical information secure on MediConnect?",
     answer:
-      "MediConnect is designed to work with a wide range of healthcare providers. You can invite your current doctor to join the platform, or you can find new providers who are already using MediConnect.",
+      "Absolutely. We take your privacy seriously. MediConnect uses state-of-the-art encryption and follows all HIPAA guidelines to ensure your medical information is always secure and confidential.",
   },
   {
-    question: "Is the AI prescription analysis feature FDA approved?",
+    question: "How often is the drug cost information updated?",
     answer:
-      "While our AI analysis tool is not FDA approved as a diagnostic tool, it is designed to provide helpful insights and flag potential issues for review by healthcare professionals. Always consult with your doctor or pharmacist for medical advice.",
+      "Our drug cost database is updated daily to ensure you have the most current pricing information available.",
   },
   {
-    question: "How often is the Health Education Library updated?",
+    question: "Can I use MediConnect if I'm taking multiple medications?",
     answer:
-      "Our Health Education Library is continuously updated with the latest medical research and guidelines. We have a team of healthcare professionals who review and update the content regularly to ensure its accuracy and relevance.",
+      "Yes, MediConnect is especially useful for those taking multiple medications. Our system can analyze complex medication regimens and identify potential interactions or issues across all your prescriptions.",
   },
-];
+]
 
 const ParallaxText = ({ children, baseVelocity = 100 }) => {
-  const baseX = useMotionValue(0);
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
+  const baseX = useMotionValue(0)
+  const { scrollY } = useScroll()
+  const scrollVelocity = useVelocity(scrollY)
   const smoothVelocity = useSpring(scrollVelocity, {
     damping: 50,
     stiffness: 400,
-  });
+  })
   const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
     clamp: false,
-  });
+  })
 
-  const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
+  const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`)
 
-  const directionFactor = useRef(1);
+  const directionFactor = useRef(1)
   useAnimationFrame((t, delta) => {
-    let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
+    let moveBy = directionFactor.current * baseVelocity * (delta / 1000)
     if (velocityFactor.get() < 0) {
-      directionFactor.current = -1;
+      directionFactor.current = -1
     } else if (velocityFactor.get() > 0) {
-      directionFactor.current = 1;
+      directionFactor.current = 1
     }
-    moveBy += directionFactor.current * moveBy * velocityFactor.get();
-    baseX.set(baseX.get() + moveBy);
-  });
+    moveBy += directionFactor.current * moveBy * velocityFactor.get()
+    baseX.set(baseX.get() + moveBy)
+  })
 
   return (
     <div className="parallax">
@@ -171,47 +146,44 @@ const ParallaxText = ({ children, baseVelocity = 100 }) => {
         <span>{children} </span>
       </motion.div>
     </div>
-  );
-};
+  )
+}
 
 export function Landing() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [expandedFAQ, setExpandedFAQ] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { scrollYProgress } = useScroll();
-  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [activeTestimonial, setActiveTestimonial] = useState(0)
+  const [expandedFAQ, setExpandedFAQ] = useState(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { scrollYProgress } = useScroll()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const authFlag = localStorage.getItem("isAuthenticated");
-    setIsAuthenticated(authFlag === "true");
-  }, []);
+    const authFlag = localStorage.getItem("isAuthenticated")
+    setIsAuthenticated(authFlag === "true")
+  }, [])
 
   useEffect(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add("dark")
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove("dark")
     }
-  }, [isDarkMode]);
+  }, [isDarkMode])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+  const toggleDarkMode = () => setIsDarkMode(!isDarkMode)
 
   return (
     <div className={`min-h-screen ${isDarkMode ? "dark" : ""}`}>
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-blue-500 z-50"
-        style={{ scaleX: scrollYProgress }}
-      />
+      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-blue-500 z-50" style={{ scaleX: scrollYProgress }} />
       <div className="bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200 transition-colors duration-300">
         <Navbar darkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
 
@@ -227,7 +199,7 @@ export function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Bridging the Gap Between You and Your Doctor
+                Your Complete Medication Management Solution
               </motion.h2>
               <motion.p
                 className="text-xl mb-8 max-w-2xl"
@@ -235,8 +207,8 @@ export function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Experience seamless healthcare management with AI-powered
-                prescription analysis and direct doctor communication.
+                Experience seamless healthcare management with AI-powered prescription analysis, cost comparisons,
+                educational resources, and 24/7 support.
               </motion.p>
               <motion.button
                 className="bg-white text-blue-600 dark:bg-gray-800 dark:text-blue-400 font-bold py-3 px-8 rounded-full hover:bg-blue-100 dark:hover:bg-gray-700 transition duration-300 shadow-lg"
@@ -253,7 +225,7 @@ export function Landing() {
             <div className="md:w-1/2 mt-10 md:mt-0 relative">
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-300 dark:bg-blue-700 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
             </div>
-            {[Shield, MessageCircle, Calendar, Pill].map((Icon, index) => (
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
                 className="absolute hidden md:block text-white opacity-50"
@@ -272,15 +244,13 @@ export function Landing() {
                   delay: index * 0.5,
                 }}
               >
-                <Icon size={24} />
+                <feature.icon size={24} />
               </motion.div>
             ))}
           </div>
         </section>
 
-        <ParallaxText baseVelocity={-5}>
-          MediConnect • Empowering Your Health Journey •
-        </ParallaxText>
+        <ParallaxText baseVelocity={-5}>MediConnect • Empowering Your Health Journey •</ParallaxText>
 
         <section id="features" className="py-20">
           <div className="container mx-auto px-4">
@@ -298,26 +268,17 @@ export function Landing() {
                   whileHover={{ scale: 1.05, rotate: 1 }}
                 >
                   <feature.icon className="w-12 h-12 text-blue-500 dark:text-blue-400 mb-4" />
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {feature.description}
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        <section
-          id="how-it-works"
-          className="py-20 bg-gray-100 dark:bg-gray-800"
-        >
+        <section id="how-it-works" className="py-20 bg-gray-100 dark:bg-gray-800">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 text-blue-600 dark:text-blue-400">
-              How It Works
-            </h2>
+            <h2 className="text-3xl font-bold text-center mb-12 text-blue-600 dark:text-blue-400">How It Works</h2>
             <div className="flex flex-col md:flex-row justify-around items-center">
               {steps.map((step, index) => (
                 <motion.div
@@ -334,12 +295,8 @@ export function Landing() {
                   >
                     <step.icon className="w-8 h-8 text-blue-500 dark:text-blue-400" />
                   </motion.div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 max-w-xs">
-                    {step.description}
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">{step.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 max-w-xs">{step.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -351,9 +308,7 @@ export function Landing() {
           className="py-20 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-800 dark:to-purple-900 text-white overflow-hidden"
         >
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              What Our Users Say
-            </h2>
+            <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
             <div className="relative">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -366,17 +321,13 @@ export function Landing() {
                 >
                   <div className="flex items-center mb-4">
                     <img
-                      src={testimonials[activeTestimonial].avatar}
+                      src={testimonials[activeTestimonial].avatar || "/placeholder.svg"}
                       alt={testimonials[activeTestimonial].author}
                       className="w-16 h-16 rounded-full mr-4"
                     />
                     <div>
-                      <p className="text-lg italic">
-                        "{testimonials[activeTestimonial].quote}"
-                      </p>
-                      <p className="font-semibold mt-2">
-                        - {testimonials[activeTestimonial].author}
-                      </p>
+                      <p className="text-lg italic">"{testimonials[activeTestimonial].quote}"</p>
+                      <p className="font-semibold mt-2">- {testimonials[activeTestimonial].author}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -386,9 +337,7 @@ export function Landing() {
                   <button
                     key={index}
                     className={`w-3 h-3 rounded-full mx-1 ${
-                      index === activeTestimonial
-                        ? "bg-white"
-                        : "bg-white bg-opacity-50"
+                      index === activeTestimonial ? "bg-white" : "bg-white bg-opacity-50"
                     }`}
                     onClick={() => setActiveTestimonial(index)}
                   />
@@ -414,9 +363,7 @@ export function Landing() {
                 >
                   <button
                     className="flex justify-between items-center w-full text-left text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200"
-                    onClick={() =>
-                      setExpandedFAQ(expandedFAQ === index ? null : index)
-                    }
+                    onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
                   >
                     <span>{item.question}</span>
                     {expandedFAQ === index ? <ChevronUp /> : <ChevronDown />}
@@ -455,7 +402,7 @@ export function Landing() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate("/Signup")}
               >
-                Signup
+                Sign Up Now
               </motion.button>
             </div>
           </section>
@@ -466,41 +413,27 @@ export function Landing() {
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-4 md:mb-0">
                 <h3 className="text-xl font-bold text-blue-400">MediConnect</h3>
-                <p className="text-sm text-gray-400">
-                  Empowering patient-doctor relationships
-                </p>
+                <p className="text-sm text-gray-400">Empowering patient-doctor relationships</p>
               </div>
               <nav>
                 <ul className="flex space-x-4">
                   <li>
-                    <a
-                      href="#"
-                      className="hover:text-blue-400 transition duration-300"
-                    >
+                    <a href="#" className="hover:text-blue-400 transition duration-300">
                       Home
                     </a>
                   </li>
                   <li>
-                    <a
-                      href="#"
-                      className="hover:text-blue-400 transition duration-300"
-                    >
+                    <a href="#" className="hover:text-blue-400 transition duration-300">
                       About
                     </a>
                   </li>
                   <li>
-                    <a
-                      href="#"
-                      className="hover:text-blue-400 transition duration-300"
-                    >
+                    <a href="#" className="hover:text-blue-400 transition duration-300">
                       Contact
                     </a>
                   </li>
                   <li>
-                    <a
-                      href="#"
-                      className="hover:text-blue-400 transition duration-300"
-                    >
+                    <a href="#" className="hover:text-blue-400 transition duration-300">
                       Privacy Policy
                     </a>
                   </li>
@@ -514,10 +447,11 @@ export function Landing() {
         </footer>
       </div>
     </div>
-  );
+  )
 }
 
 const wrap = (min, max, v) => {
-  const rangeSize = max - min;
-  return min + ((((v - min) % rangeSize) + rangeSize) % rangeSize);
-};
+  const rangeSize = max - min
+  return min + ((((v - min) % rangeSize) + rangeSize) % rangeSize)
+}
+
