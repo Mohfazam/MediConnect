@@ -33,7 +33,8 @@ export const Login = () => {
 
       if (response.status === 200) {
         alert("Logged in successfully!");
-        // You might want to redirect the user or update the app state here
+        // Store a flag in local storage
+        localStorage.setItem("isAuthenticated", "true");
         navigate("/Landing");
       } else {
         alert(`Error: ${response.data.message || "Invalid credentials"}`);
