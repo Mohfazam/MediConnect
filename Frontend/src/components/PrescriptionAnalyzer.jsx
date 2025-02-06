@@ -36,6 +36,7 @@ import {
 } from "chart.js";
 import * as d3 from "d3";
 import { Navbar } from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -214,6 +215,8 @@ export function PrescriptionAnalyzer({ darkMode }) {
   const [adherenceData, setAdherenceData] = useState(
     mockAnalysis.adherenceTracking
   );
+
+  const navigate = useNavigate();
   const interactionsRef = useRef();
 
   const handleFileChange = (event) => {
@@ -1190,23 +1193,23 @@ export function PrescriptionAnalyzer({ darkMode }) {
               </div>
 
               <div className="mt-8 flex justify-center space-x-4">
-                <button
+                <button onClick={() => {navigate("/")}}
                   className={`px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ${
                     darkMode
                       ? "dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
                       : ""
                   }`}
                 >
-                  Consult with Doctor
+                  Home
                 </button>
-                <button
+                <button onClick={() => {navigate("/DrugCostOptimizer")}}
                   className={`px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 ${
                     darkMode
                       ? "dark:bg-green-600 dark:text-white dark:hover:bg-green-700"
                       : ""
                   }`}
                 >
-                  Schedule Pickup
+                  CostOptmizer
                 </button>
               </div>
             </motion.div>
