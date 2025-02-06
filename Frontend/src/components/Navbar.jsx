@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { Sun, Moon } from 'lucide-react';
 
 export const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
 
   const toggleTheme = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle('dark');
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const handleNavigation = (path) => {
@@ -27,10 +27,10 @@ export const Navbar = () => {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
           <button onClick={() => handleNavigation('/Landing')}>MediConnect</button>
         </h1>
-        <div className="flex items-center">
+        <div className="flex items-center ml-auto">
           <button
             onClick={toggleTheme}
-            className="mr-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors duration-300"
+            className="mr-4 items-start p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors duration-300"
           >
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
@@ -60,7 +60,7 @@ export const Navbar = () => {
               onClick={() => handleNavigation('/DrugCostOptimizer')}
               className="block py-2 md:py-0 px-4 md:px-0 text-gray-700 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300"
             >
-              CostOptimizer
+              Drug Cost Optimizer
             </button>
           </li>
           <li className="md:ml-6 mt-2 md:mt-0">
@@ -68,7 +68,7 @@ export const Navbar = () => {
               onClick={() => handleNavigation('/SeriousMedications')}
               className="block py-2 md:py-0 px-4 md:px-0 text-gray-700 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300"
             >
-              DrugWatch
+              Drug Watch
             </button>
           </li>
           <li className="md:ml-6 mt-2 md:mt-0">
@@ -76,7 +76,7 @@ export const Navbar = () => {
               onClick={() => handleNavigation('/meded')}
               className="block py-2 md:py-0 px-4 md:px-0 text-gray-700 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300"
             >
-              MedEd
+              Med-Ed
             </button>
           </li>
           <li className="md:ml-6 mt-2 md:mt-0">
@@ -84,7 +84,7 @@ export const Navbar = () => {
               onClick={() => handleNavigation('/chatbot')}
               className="block py-2 md:py-0 px-4 md:px-0 text-gray-700 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300"
             >
-              MED-AI
+              Med-AI
             </button>
           </li>
         </ul>
